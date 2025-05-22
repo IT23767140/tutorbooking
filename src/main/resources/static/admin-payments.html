@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Management - Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0B1120; color: #E0E0E0; }
+        .btn-secondary { background-color: transparent; color: #60A5FA; border: 2px solid #2563EB; padding: calc(0.5rem - 1px) calc(1rem - 1px) ; border-radius: 0.375rem; font-weight: 500; transition: all 0.3s; display: inline-block; text-align: center; }
+        .btn-secondary:hover { background-color: #2563EB; color: white; }
+        .nav-link { transition: color 0.3s, background-color 0.3s; }
+        .nav-link:hover { color: #93C5FD; background-color: rgba(59, 130, 246, 0.1); }
+        .table-wrapper { background-color: #1E293B; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto;}
+        th { background-color: #334155; padding: 0.75rem 1rem; text-align: left; font-semibold; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+        td { border-bottom: 1px solid #334155; padding: 0.75rem 1rem; white-space: nowrap; }
+        tr:last-child td { border-bottom: none; }
+        .error-message { color: #F87171; font-size: 0.875rem; margin-top: 0.25rem; }
+        .status-scheduled { color: #FBBF24; } .status-completed { color: #34D399; } .status-cancelled { color: #F87171; }
+        /* Dropdown styles */
+        .dropdown-menu {
+          display: none;
+          transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        .dropdown-menu.open {
+          display: block;
+          opacity: 1;
+          transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<nav class="bg-slate-900/70 backdrop-blur-md text-white p-4 sticky top-0 z-50 shadow-xl border-b border-slate-700/50 h-[4.5rem]">
+    <div class="container mx-auto flex justify-between items-center h-full">
+        <a href="/index.html" class="text-xl sm:text-2xl font-bold tracking-tight">Tutor<span class="text-blue-500">Connect</span></a>
+        <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+            <a href="/index.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Main Site</a>
+            <div id="userAvatarDropdownContainer" class="relative ml-2 sm:ml-3" style="display: none;">
+                <button id="userAvatarButton" class="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 rounded-full text-white text-base sm:text-lg font-semibold focus:outline-none ring-2 ring-transparent hover:ring-blue-400 focus:ring-blue-400 transition"></button>
+                <div id="userDropdownMenu" class="dropdown-menu absolute right-0 mt-2 w-60 bg-slate-800 rounded-md shadow-2xl py-1 z-[60] border border-slate-700">
+                    <div class="px-4 py-3 border-b border-slate-700">
+                        <p class="text-sm text-white font-semibold" id="dropdownUsername">Admin User</p>
+                        <p class="text-xs text-slate-400" id="dropdownUserRole">Administrator</p>
+                    </div>
+                    <a href="/user-profile.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">My Profile</a>
+                    <a href="/admin-dashboard.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Admin Dashboard</a>
+                    <a href="/admin-users.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">User Management</a>
+                    <a href="/admin-tutors.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Tutor Management</a>
+                    <a href="/admin-bookings.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white font-semibold text-blue-400">Booking Management</a>
+                    <a href="/admin-payments.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Payment Overview</a>
+                    <a href="/admin-reviews.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Review Moderation</a>
+                    <hr class="border-slate-700 my-1">
+                    <button id="navDropdownLogoutLink" class="w-full text-left block px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300">Logout</button>
+                </div>
+            </div>
+            <div id="authLinksContainer" class="flex items-center space-x-2 sm:space-x-3 md:space-x-4" style="display: none;">
+                <a id="navLoginLink" href="/login.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Login</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto py-12 px-4">
+    <h1 class="text-3xl sm:text-4xl font-bold text-white mb-8 text-center">All Payments</h1>
+
+    <div id="loadingMessagePayments" class="text-center py-4 text-gray-400">Loading payments...</div>
+    <div id="errorMessagePayments" class="error-message text-center mb-4"></div>
+
+    <div class="table-wrapper">
+        <table class="min-w-full">
+            <thead>
+            <tr>
+                <th>Payment ID</th>
+                <th>Booking ID</th>
+                <th>Amount</th>
+                <th>Payment Date</th>
+                <th>Status</th>
+                <th>Type</th>
+                <th>Details</th> <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="paymentsTableBody">
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<div id="globalErrorDisplay" class="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-[100] text-sm" style="display:none; opacity: 0; transition: opacity 0.5s ease-out;"></div>
+
+<script src="/js/main.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script> <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Admin Navbar script
+        function getAdminUserSessionForNav() { const user = sessionStorage.getItem('loggedInUser'); return user ? JSON.parse(user) : null; }
+        function updateAdminNav() {
+            const user = getAdminUserSessionForNav();
+            const navUserDisplay = document.getElementById('navUserDisplay');
+            const navLogoutLink = document.getElementById('navLogoutLink');
+            if (user && user.role === 'ADMIN') {
+                if (navUserDisplay) navUserDisplay.textContent = `${user.username} (Admin)`;
+                if (navLogoutLink) navLogoutLink.style.display = 'inline-block';
+            } else {
+                if (navLogoutLink) navLogoutLink.style.display = 'none';
+            }
+        }
+        updateAdminNav();
+        const logoutBtn = document.getElementById('navLogoutLink');
+        if (logoutBtn && logoutBtn.style.display !== 'none') {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(typeof clearUserSession === 'function') clearUserSession(); else { sessionStorage.clear(); window.location.href = '/index.html';}
+            });
+        }
+
+        // Specific script for admin-payments.html
+        const paymentsTableBody = document.getElementById('paymentsTableBody');
+        const loadingMessage = document.getElementById('loadingMessagePayments');
+        const errorMessage = document.getElementById('errorMessagePayments');
+
+        async function loadAdminPayments() {
+            if (!paymentsTableBody) return;
+            if (loadingMessage) loadingMessage.style.display = 'block';
+            if (errorMessage) errorMessage.textContent = '';
+            paymentsTableBody.innerHTML = '';
+
+            try {
+                const payments = await fetchData('/payments'); // Fetch all payments
+                if (loadingMessage) loadingMessage.style.display = 'none';
+                if (!payments || payments.length === 0) {
+                    paymentsTableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-gray-400">No payments found in the system.</td></tr>';
+                    return;
+                }
+                 payments.sort((a,b) => new Date(b.paymentDate) - new Date(a.paymentDate));
+
+
+                payments.forEach(payment => {
+                    let statusClass = 'text-gray-400';
+                    if (payment.status === 'PENDING') statusClass = 'status-pending';
+                    else if (payment.status === 'COMPLETED') statusClass = 'status-completed';
+                    else if (payment.status === 'FAILED') statusClass = 'status-failed';
+
+                    let paymentDetailsText = '';
+                    if (payment.paymentTypeIdentifier === 'CREDIT_CARD') {
+                        paymentDetailsText = `Card: ...${(payment.cardNumber || 'xxxx').slice(-4)}`;
+                    } else if (payment.paymentTypeIdentifier === 'PAYPAL') {
+                        paymentDetailsText = `Email: ${payment.payPalEmail || 'N/A'}`;
+                    }
+
+
+                    const row = `
+                        <tr class="hover:bg-slate-700/50">
+                            <td class="py-3 px-4 text-sm text-gray-300">${payment.paymentId}</td>
+                            <td class="py-3 px-4 text-sm text-gray-300">${payment.bookingId}</td>
+                            <td class="py-3 px-4 text-sm text-gray-200">$${Number(payment.amount).toFixed(2)}</td>
+                            <td class="py-3 px-4 text-sm text-gray-300">${new Date(payment.paymentDate).toLocaleDateString()}</td>
+                            <td class="py-3 px-4 text-sm font-semibold ${statusClass}">${payment.status}</td>
+                            <td class="py-3 px-4 text-sm text-gray-300">${payment.paymentTypeIdentifier || 'N/A'}</td>
+                            <td class="py-3 px-4 text-sm text-gray-400">${paymentDetailsText}</td>
+                            <td class="py-3 px-4 text-sm">
+                                ${payment.status === 'PENDING' ? `
+                                    <button data-payment-id="${payment.paymentId}" data-new-status="COMPLETED" class="update-payment-status-btn text-green-400 hover:text-green-300 text-xs mr-2">Mark Completed</button>
+                                    <button data-payment-id="${payment.paymentId}" data-new-status="FAILED" class="update-payment-status-btn text-red-400 hover:text-red-300 text-xs">Mark Failed</button>
+                                ` : ''}
+                                </td>
+                        </tr>
+                    `;
+                    paymentsTableBody.innerHTML += row;
+                });
+                attachAdminPaymentEventListeners();
+            } catch (error) {
+                if (loadingMessage) loadingMessage.style.display = 'none';
+                if (errorMessage) errorMessage.textContent = `Error loading payments: ${error.message}`;
+            }
+        }
+
+        function attachAdminPaymentEventListeners() {
+            document.querySelectorAll('.update-payment-status-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const paymentIdToUpdate = e.target.dataset.paymentId;
+                    const newStatus = e.target.dataset.newStatus;
+                    if (confirm(`Are you sure you want to mark payment ${paymentIdToUpdate} as ${newStatus}?`)) {
+                        try {
+                            await fetchData(`/payments/${paymentIdToUpdate}/status`, {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ status: newStatus })
+                            });
+                            alert(`Payment ${paymentIdToUpdate} status updated to ${newStatus}.`);
+                            loadAdminPayments(); // Refresh list
+                        } catch (error) {
+                            alert(`Failed to update payment status: ${error.message}`);
+                        }
+                    }
+                });
+            });
+        }
+        loadAdminPayments();
+    });
+</script>
+</body>
+</html>
