@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Review - TutorConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0B1120; color: #E0E0E0; }
+        .btn-primary { background-color: #2563EB; color: white; padding: 0.75rem 1.5rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.3s; display: inline-block; text-align: center; }
+        .btn-primary:hover { background-color: #1D4ED8; }
+        .card { background-color: #1E293B; border-radius: 0.5rem; padding: 2rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+        .input-field { background-color: #2C3A4F; border: 1px solid #3B4B60; color: #E0E0E0; padding: 0.75rem 1rem; border-radius: 0.375rem; width: 100%; transition: border-color 0.3s; }
+        .input-field:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 2px rgba(37,99,235,0.5); }
+        .nav-link { transition: color 0.3s; }
+        .nav-link:hover { color: #60A5FA; }
+        .error-message { color: #F87171; font-size: 0.875rem; margin-top: 0.25rem; text-align: left; }
+        /* Star Rating Styles */
+        .star-rating-input { display: flex; justify-content: center; margin-bottom: 1rem; }
+        .star-rating-input .star { font-size: 2.5rem; color: #4B5563; /* gray-600 */ cursor: pointer; transition: color 0.2s; }
+        .star-rating-input .star:hover,
+        .star-rating-input .star.selected { color: #FBBF24; /* amber-400 */ }
+    </style>
+</head>
+<body class="antialiased">
+
+<nav class="bg-slate-900/80 backdrop-blur-md text-white p-4 sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto flex justify-between items-center">
+        <a href="/index.html" class="text-xl sm:text-2xl font-bold shrink-0">Tutor<span class="text-blue-500">Connect</span></a>
+        <div class="space-x-2 sm:space-x-3 md:space-x-4 flex items-center flex-wrap justify-end">
+            <a href="/index.html" class="nav-link text-xs sm:text-sm md:text-base">Home</a>
+            <a href="/tutors.html" class="nav-link text-xs sm:text-sm md:text-base">Our Tutors</a>
+            <a id="navLoginLink" href="/login.html" class="nav-link text-xs sm:text-sm md:text-base" style="display:none;">Login</a>
+            <a id="navRegisterLink" href="/register.html" class="btn-primary text-xs sm:text-sm px-2 py-1.5 sm:px-3 sm:py-2 md:px-4 md:py-2.5" style="display:none;">Join Today</a>
+            <a id="navProfileLink" href="/user-profile.html" class="nav-link text-xs sm:text-sm md:text-base" style="display:none;">My Profile</a>
+            <a id="navAdminDashboardLink" href="/admin-dashboard.html" class="nav-link text-xs sm:text-sm md:text-base" style="display:none;">Admin</a>
+            <button id="navLogoutLink" style="display:none;" class="btn-secondary text-xs sm:text-sm px-2 py-1 sm:px-3 sm:py-1.5 md:px-4 md:py-2">Logout</button>
+            <span id="navUserDisplay" class="ml-1 sm:ml-2 text-xs sm:text-sm hidden sm:inline"></span>
+        </div>
+    </div>
+</nav>
+
+<main class="container mx-auto py-12 px-4">
+    <div class="max-w-lg mx-auto card">
+        <h1 class="text-3xl font-bold text-white mb-2 text-center">Write a Review</h1>
+        <p class="text-center text-gray-400 mb-8">for <strong id="tutorNameForReview" class="text-blue-400">Loading tutor...</strong></p>
+
+        <form id="reviewForm" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-2 text-center">Your Rating</label>
+                <div id="starRatingContainer" class="star-rating-input" data-rating-input-id="ratingValue">
+                    <span class="star" data-value="1">☆</span>
+                    <span class="star" data-value="2">☆</span>
+                    <span class="star" data-value="3">☆</span>
+                    <span class="star" data-value="4">☆</span>
+                    <span class="star" data-value="5">☆</span>
+                </div>
+                <input type="hidden" id="ratingValue" name="rating" required>
+            </div>
+
+            <div>
+                <label for="comment" class="block text-sm font-medium text-gray-300 mb-1">Your Comment</label>
+                <textarea id="comment" name="comment" rows="4" required class="input-field" placeholder="Share your experience with this tutor..."></textarea>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+
+            <div>
+                <button type="submit" class="btn-primary w-full py-2.5 text-base">Submit Review</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<footer class="bg-slate-950 text-gray-400 py-8 text-center mt-12">
+    <div class="container mx-auto">
+        <p>&copy; <span id="currentYear"></span> TutorConnect. All rights reserved.</p>
+    </div>
+</footer>
+
+<div id="globalErrorDisplay" class="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-[100] text-sm" style="display:none; opacity: 0; transition: opacity 0.5s ease-out;"></div>
+
+<script src="/js/main.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/review.js"></script> <script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+    document.addEventListener('DOMContentLoaded', () => {
+        // Navbar script
+        function getUserSessionForNav() { const user = sessionStorage.getItem('loggedInUser'); return user ? JSON.parse(user) : null; }
+        function updateNavOnLoginForNav() {
+            const user = getUserSessionForNav();
+            const navUserDisplay = document.getElementById('navUserDisplay');
+            const navLoginLink = document.getElementById('navLoginLink');
+            const navRegisterLink = document.getElementById('navRegisterLink');
+            const navLogoutLink = document.getElementById('navLogoutLink');
+            const navProfileLink = document.getElementById('navProfileLink');
+            const navAdminDashboardLink = document.getElementById('navAdminDashboardLink');
+
+            if (user) {
+                if (navUserDisplay) navUserDisplay.textContent = `${user.username}`;
+                if (navLoginLink) navLoginLink.style.display = 'none';
+                if (navRegisterLink) navRegisterLink.style.display = 'none';
+                if (navLogoutLink) { navLogoutLink.style.display = 'inline-block'; }
+                if (navProfileLink) navProfileLink.style.display = 'inline-block';
+                if (navAdminDashboardLink) navAdminDashboardLink.style.display = user.role === 'ADMIN' ? 'inline-block' : 'none';
+            } else {
+                if (navUserDisplay) navUserDisplay.textContent = '';
+                if (navLoginLink) navLoginLink.style.display = 'inline-block';
+                if (navRegisterLink) navRegisterLink.style.display = 'inline-block';
+                if (navLogoutLink) navLogoutLink.style.display = 'none';
+                if (navProfileLink) navProfileLink.style.display = 'none';
+                if (navAdminDashboardLink) navAdminDashboardLink.style.display = 'none';
+            }
+        }
+        updateNavOnLoginForNav();
+        const logoutBtn = document.getElementById('navLogoutLink');
+        if (logoutBtn && logoutBtn.style.display !== 'none') {
+            logoutBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if(typeof clearUserSession === 'function') clearUserSession(); else { sessionStorage.clear(); window.location.href = '/index.html';}
+            });
+        }
+    });
+</script>
+</body>
+</html>
