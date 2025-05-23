@@ -1,0 +1,5 @@
+tutor-001,Dr. Carla Avis,Physics;Advanced Mathematics,4.6,Mon-ri 2pm-6pm,PhD in Physics;     Ex-Professor
+tutor-002,Mr. David Wilson,Chemistry;Oranic Chemistry,4.9,Tue/Thu 5pm-8pm;Sat All Day,MSc Chemistry ;Certified Tutor
+tutor-003,Sarah Miller,English Literature;Creative Writing,4.9,Flexible;Online Only,MA English Lit;Published Author
+tutor-004,Kevin Lee,Computer Science;Java Programming,4.9,Weekends;Mon Evening,BSc Computer Science;Software Developer
+tutor-4a5adb47-60e6-4b43-a164-12c01e8b8aae,Mr. John Patek,Chemistry;Oranic Chemistry,4.5,Weekdays,20 year experience as a high school teacher 
