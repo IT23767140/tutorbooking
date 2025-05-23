@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Profile Management - Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0B1120; color: #E0E0E0; }
+    .btn-primary { background-color: #2563EB; color: white; padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 500; transition: background-color 0.3s; }
+    .btn-primary:hover { background-color: #1D4ED8; }
+    .btn-secondary { background-color: transparent; color: #60A5FA; border: 2px solid #2563EB; padding: calc(0.5rem - 1px) calc(1rem - 1px) ; border-radius: 0.375rem; font-weight: 500; transition: all 0.3s; display: inline-block; text-align: center; }
+    .btn-secondary:hover { background-color: #2563EB; color: white; }
+    .input-field { background-color: #2C3A4F; border: 1px solid #3B4B60; color: #E0E0E0; padding: 0.75rem 1rem; border-radius: 0.375rem; width: 100%; }
+    .input-field:focus { outline: none; border-color: #2563EB; box-shadow: 0 0 0 1px rgba(37,99,235,0.5); }
+    .nav-link { transition: color 0.3s, background-color 0.3s; }
+    .nav-link:hover { color: #93C5FD; background-color: rgba(59, 130, 246, 0.1); }
+    .table-wrapper { background-color: #1E293B; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); overflow-x: auto;}
+    th { background-color: #334155; padding: 0.75rem 1rem; text-align: left; font-semibold; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+    td { border-bottom: 1px solid #334155; padding: 0.75rem 1rem; white-space: nowrap; }
+    td.wrap-text { white-space: normal; }
+    tr:last-child td { border-bottom: none; }
+    .modal { background-color: rgba(11, 17, 32, 0.8); backdrop-filter: blur(5px); }
+    .error-message { color: #F87171; font-size: 0.875rem; margin-top: 0.25rem; }
+    .dropdown-menu {
+      display: none;
+      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    .dropdown-menu.open {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+<nav class="bg-slate-900/70 backdrop-blur-md text-white p-4 sticky top-0 z-50 shadow-xl border-b border-slate-700/50 h-[4.5rem]">
+  <div class="container mx-auto flex justify-between items-center h-full">
+    <a href="/index.html" class="text-xl sm:text-2xl font-bold tracking-tight">Tutor<span class="text-blue-500">Connect</span></a>
+    <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+      <a href="/index.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Main Site</a>
+      <div id="userAvatarDropdownContainer" class="relative ml-2 sm:ml-3" style="display: none;">
+        <button id="userAvatarButton" class="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 rounded-full text-white text-base sm:text-lg font-semibold focus:outline-none ring-2 ring-transparent hover:ring-blue-400 focus:ring-blue-400 transition">
+        </button>
+        <div id="userDropdownMenu" class="dropdown-menu absolute right-0 mt-2 w-60 bg-slate-800 rounded-md shadow-2xl py-1 z-[60] border border-slate-700">
+          <div class="px-4 py-3 border-b border-slate-700">
+            <p class="text-sm text-white font-semibold" id="dropdownUsername">Admin User</p>
+            <p class="text-xs text-slate-400" id="dropdownUserRole">Administrator</p>
+          </div>
+          <a href="/admin-dashboard.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Admin Dashboard</a>
+          <a href="/admin-users.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">User Management</a>
+          <a href="/admin-students.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white font-semibold text-blue-400">Student Profiles</a>
+          <a href="/admin-tutors.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Tutor Management</a>
+          <a href="/admin-bookings.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Booking Management</a>
+          <a href="/admin-payments.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Payment Overview</a>
+          <a href="/admin-reviews.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Review Moderation</a>
+          <hr class="border-slate-700 my-1">
+          <button id="navDropdownLogoutLink" class="w-full text-left block px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300">Logout</button>
+        </div>
+      </div>
+      <div id="authLinksContainer" class="flex items-center space-x-2 sm:space-x-3 md:space-x-4" style="display: none;">
+        <a id="navLoginLink" href="/login.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Login</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<main class="container mx-auto py-12 px-4">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl sm:text-4xl font-bold text-white">Student Profile Management</h1>
+  </div>
+
+  <div id="loadingMessageStudents" class="text-center py-4 text-gray-400">Loading student profiles...</div>
+  <div id="errorMessageStudents" class="error-message text-center mb-4"></div>
+
+  <div class="table-wrapper">
+    <table class="min-w-full">
+      <thead>
+      <tr>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th class="min-w-[150px]">Preferred Subjects</th>
+        <th>Availability</th>
+        <th>Learning Preference</th>
+        <th>Type</th> <th>Details</th> <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody id="studentsTableBody">
+      </tbody>
+    </table>
+  </div>
+</main>
+
+<div id="studentModal" class="fixed inset-0 modal items-center justify-center p-4" style="display: none;">
+  <div class="bg-slate-800 p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-6">
+      <h2 id="studentModalTitle" class="text-2xl font-semibold text-white">Edit Student Profile</h2>
+      <button id="closeStudentModalBtn" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+    </div>
+    <form id="studentForm" class="space-y-4">
+      <input type="hidden" id="editStudentId" name="editStudentId">
+      <div>
+        <label for="studentName" class="block text-sm font-medium text-gray-300 mb-1">Name</label>
+        <input type="text" id="studentName" name="name" required class="input-field">
+      </div>
+      <div>
+        <label for="studentPreferredSubjects" class="block text-sm font-medium text-gray-300 mb-1">Preferred Subjects (comma-separated)</label>
+        <input type="text" id="studentPreferredSubjects" name="preferredSubjects" class="input-field" placeholder="e.g., Math, Physics">
+      </div>
+      <div>
+        <label for="studentAvailability" class="block text-sm font-medium text-gray-300 mb-1">Availability</label>
+        <input type="text" id="studentAvailability" name="availability" class="input-field" placeholder="e.g., Weekdays evenings">
+      </div>
+      <div>
+        <label for="studentLearningPreference" class="block text-sm font-medium text-gray-300 mb-1">Learning Preference</label>
+        <select id="studentLearningPreference" name="learningPreference" class="input-field">
+          <option value="">Not Set</option>
+          <option value="One-on-one">One-on-one</option>
+          <option value="Group sessions">Group sessions</option>
+          <option value="Flexible">Flexible</option>
+        </select>
+      </div>
+      <div id="adminPremiumStudentFields" style="display:none;">
+        <label for="adminStudentDiscount" class="block text-sm font-medium text-gray-300 mb-1">Discount Percentage (Premium)</label>
+        <input type="number" id="adminStudentDiscount" name="discountPercentage" class="input-field" placeholder="e.g., 10 for 10%">
+      </div>
+      <div id="studentModalErrorMessage" class="error-message"></div>
+      <div class="flex justify-end space-x-3 pt-2">
+        <button type="button" id="cancelStudentModalBtn" class="btn-secondary px-4 py-2 text-sm">Cancel</button>
+        <button type="submit" class="btn-primary px-4 py-2 text-sm">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="globalErrorDisplay" class="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-[100] text-sm" style="display:none; opacity: 0; transition: opacity 0.5s ease-out;"></div>
+
+<script src="/js/main.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script> <script>
+  document.addEventListener('DOMContentLoaded', () => {
+      if (typeof updateNavOnLoginGlobal === 'function') {
+          updateNavOnLoginGlobal();
+      }
+      // Admin students specific logic will be in admin.js
+  });
+</script>
+</body>
+</html>

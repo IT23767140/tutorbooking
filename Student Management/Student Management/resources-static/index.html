@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorConnect - Empowering Minds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0B1120; color: #E0E0E0; overflow-x: hidden; }
+        .btn-primary { background-color: #2563EB; color: white; padding: 0.85rem 2rem; border-radius: 0.5rem; font-weight: 600; transition: background-color 0.3s, transform 0.2s; display: inline-block; text-align: center; letter-spacing: 0.025em; }
+        .btn-primary:hover { background-color: #1D4ED8; transform: translateY(-2px); }
+        .btn-secondary { background-color: transparent; color: #60A5FA; border: 2px solid #2563EB; padding: calc(0.85rem - 2px) calc(2rem - 2px); border-radius: 0.5rem; font-weight: 600; transition: all 0.3s; display: inline-block; text-align: center; letter-spacing: 0.025em; }
+        .btn-secondary:hover { background-color: #2563EB; color: white; transform: translateY(-2px); }
+        .card { background-color: #1E293B; border-radius: 0.5rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+        .nav-link { transition: color 0.3s, background-color 0.3s; }
+        .nav-link:hover { color: #93C5FD; background-color: rgba(59, 130, 246, 0.1); }
+
+        .hero-visual-element {
+          background: linear-gradient(135deg, rgba(37, 99, 235, 0.2) 0%, rgba(17, 24, 39, 0.05) 100%);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(59, 130, 246, 0.15);
+          overflow: hidden; /* To ensure image corners are clipped by rounded-3xl */
+        }
+        .feature-card { transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; }
+        .feature-card:hover { transform: translateY(-6px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2); }
+        .avatar-ring img { border: 3px solid #1E293B; }
+
+        .blur-pulse-1 { animation: pulse-fade 8s infinite ease-in-out; }
+        .blur-pulse-2 { animation: pulse-fade 8s infinite 2s ease-in-out; }
+        @keyframes pulse-fade {
+          0%, 100% { opacity: 0.2; transform: scale(0.95); }
+          50% { opacity: 0.4; transform: scale(1.05); }
+        }
+
+        /* Decorative dot animation */
+        .deco-dot {
+          position: absolute; /* Ensure dots are absolutely positioned */
+          animation: float-subtle 6s infinite ease-in-out;
+        }
+        .deco-dot.delay-1 { animation-delay: -2s; }
+        .deco-dot.delay-2 { animation-delay: -4s; }
+        @keyframes float-subtle {
+          0%, 100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.6; }
+          25% { transform: translateY(-5px) translateX(3px) scale(1.05); opacity: 0.8; }
+          50% { transform: translateY(0px) translateX(-3px) scale(1); opacity: 0.7; }
+          75% { transform: translateY(5px) translateX(0px) scale(0.95); opacity: 0.5; }
+        }
+        /* Dropdown styles */
+        .dropdown-menu {
+            display: none; /* Hidden by default, JS will toggle */
+            transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        .dropdown-menu.open {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+<nav class="bg-slate-900/70 backdrop-blur-md text-white p-4 sticky top-0 z-50 shadow-xl border-b border-slate-700/50 h-[4.5rem]">
+    <div class="container mx-auto flex justify-between items-center h-full">
+        <a href="/index.html" class="text-xl sm:text-2xl font-bold tracking-tight">Tutor<span class="text-blue-500">Connect</span></a>
+
+        <div class="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+            <a href="/index.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Home</a>
+            <a href="/tutors.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Our Tutors</a>
+
+
+            <div id="authLinksContainer" class="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+                <a id="navLoginLink" href="/login.html" class="nav-link text-xs sm:text-sm md:text-base px-2 py-1.5 rounded-md">Login</a>
+                <a id="navRegisterLink" href="/register.html" class="btn-primary text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-[0.6rem]">Join Today</a>
+            </div>
+
+            <div id="userAvatarDropdownContainer" class="relative ml-2 sm:ml-3" style="display: none;">
+                <button id="userAvatarButton" class="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 rounded-full text-white text-base sm:text-lg font-semibold focus:outline-none ring-2 ring-transparent hover:ring-blue-400 focus:ring-blue-400 transition">
+                </button>
+                <div id="userDropdownMenu" class="dropdown-menu absolute right-0 mt-2 w-56 bg-slate-800 rounded-md shadow-2xl py-1 z-[60] border border-slate-700">
+                    <div class="px-4 py-3 border-b border-slate-700">
+                        <p class="text-sm text-white font-semibold" id="dropdownUsername">Username</p>
+                        <p class="text-xs text-slate-400" id="dropdownUserRole">Role</p>
+                    </div>
+                    <a href="/user-profile.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">My Profile</a>
+                    <a href="/my-bookings.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">My Bookings</a>
+                    <a href="/payment-history.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white">Payment History</a>
+                    <a id="navAdminDashboardLink" href="/admin-dashboard.html" class="block px-4 py-2 text-sm text-gray-300 hover:bg-slate-700 hover:text-white" style="display:none;">Admin Dashboard</a>
+                    <hr class="border-slate-700 my-1">
+                    <button id="navDropdownLogoutLink" class="w-full text-left block px-4 py-2 text-sm text-red-400 hover:bg-slate-700 hover:text-red-300">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<header class="bg-gradient-to-b from-[#0B1120] via-[#111827] to-[#0B1120] py-20 sm:py-28 px-4 overflow-hidden min-h-[calc(100vh-4.5rem)] flex items-center">
+    <div class="container mx-auto grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
+        <div class="text-center lg:text-left relative z-10">
+            <p class="text-base sm:text-lg text-blue-400 font-semibold uppercase tracking-wider mb-4">Your Learning Journey Starts Here</p>
+            <h1 class="text-4xl sm:text-5xl xl:text-6xl font-extrabold text-white mb-6 !leading-tight sm:!leading-tight xl:!leading-tight">
+                Empowering Minds, <br class="hidden sm:block">Connecting Futures.
+            </h1>
+            <p class="text-gray-300 text-lg sm:text-xl mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                Discover a world-class tutoring experience tailored to your success. Find expert tutors, schedule with ease, and achieve your academic goals on TutorConnect.
+            </p>
+            <div class="space-y-4 sm:space-y-0 sm:flex sm:space-x-4 mb-12 justify-center lg:justify-start">
+                <a href="/tutors.html" class="btn-primary w-full sm:w-auto text-base block sm:inline-block">Explore Tutors</a>
+                <a href="/register.html" class="btn-secondary w-full sm:w-auto text-base block sm:inline-block">Get Started Free</a>
+            </div>
+            <div class="flex items-center justify-center lg:justify-start">
+                <div class="flex -space-x-3 sm:-space-x-4 overflow-hidden avatar-ring">
+                    <img class="inline-block h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-2 ring-slate-700 object-cover" src="https://www.law.northwestern.edu/academics/degree-programs/msl/graphics/student-profile-aaditya.png" alt="User 1" title="User 1">
+                    <img class="inline-block h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-2 ring-slate-700 object-cover" src="https://i.pinimg.com/736x/26/ab/21/26ab21181ef14468f831f303e5187547.jpg" alt="User 2" title="User 2">
+                    <img class="inline-block h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-2 ring-slate-700 object-cover" src="https://i.pinimg.com/736x/a2/b4/8c/a2b48c3578326f37a04c1fe87f608f6f.jpg" alt="User 3" title="User 3">
+                    <div class="inline-flex items-center justify-center h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-2 ring-slate-700 bg-slate-600 text-slate-200 text-xs sm:text-sm font-semibold">2k+</div>
+                </div>
+                <p class="ml-3 sm:ml-4 text-gray-400 text-sm sm:text-base">Joined by <span class="font-semibold text-white">thousands</span> of learners.</p>
+            </div>
+        </div>
+
+        <div class="relative mt-12 lg:mt-0 flex items-center justify-center w-full h-full min-h-[450px] sm:min-h-[500px] lg:min-h-[600px]">
+            <div class="absolute inset-0 -z-10">
+                <div class="absolute top-[20%] left-[15%] w-3/5 h-3/5 bg-blue-600 rounded-full filter blur-3xl opacity-20 blur-pulse-1"></div>
+                <div class="absolute bottom-[15%] right-[10%] w-1/2 h-1/2 bg-pink-500 rounded-full filter blur-3xl opacity-20 blur-pulse-2"></div>
+            </div>
+
+            <div class="deco-dot top-[10%] left-[5%] w-3 h-3 sm:w-4 sm:h-4 bg-yellow-400 rounded-full opacity-60 filter blur-xs"></div>
+            <div class="deco-dot delay-1 top-[15%] right-[8%] w-2 h-2 sm:w-3 sm:h-3 bg-pink-400 rounded-full opacity-50 filter blur-xs"></div>
+            <div class="deco-dot delay-2 bottom-[12%] left-[10%] w-4 h-4 sm:w-5 sm:h-5 bg-teal-400 rounded-full opacity-70 filter blur-sm"></div>
+            <div class="deco-dot bottom-[20%] right-[15%] w-3 h-3 bg-purple-400 rounded-full opacity-60 filter blur-xs"></div>
+            <div class="deco-dot delay-1 top-[45%] left-[-5%] w-2 h-2 bg-sky-400 rounded-full opacity-50 filter blur-xs"></div>
+            <div class="deco-dot delay-2 top-[70%] right-[-3%] w-3 h-3 bg-green-400 rounded-full opacity-60 filter blur-xs"></div>
+
+
+            <div class="group relative hero-visual-element w-[300px] h-[450px] sm:w-[340px] sm:h-[510px] md:w-[380px] md:h-[570px] lg:w-[400px] lg:h-[600px] xl:w-[440px] xl:h-[660px] rounded-3xl shadow-2xl transform rotate-3 group-hover:rotate-0 transition-transform duration-500 ease-out z-0">
+                <img src="https://i.pinimg.com/736x/b9/77/2f/b9772fcac522e92b7c0efbf8aed7484c.jpg"
+                     alt="Modern Learning Environment"
+                     class="w-full h-full object-cover rounded-3xl">
+
+                <p class="absolute bottom-6 right-6 text-xs text-slate-400/70 transform rotate-[-3deg] group-hover:rotate-0 transition-transform duration-500">Connect & Learn</p>
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="features" class="py-16 sm:py-20 bg-slate-800 px-4">
+    <div class="container mx-auto">
+        <div class="text-center mb-12 sm:mb-16">
+            <h2 class="text-3xl sm:text-4xl font-bold text-white">Why Choose TutorConnect?</h2>
+            <p class="text-gray-300 max-w-2xl mx-auto mt-4 text-lg">
+                We provide a seamless platform connecting dedicated students with professional tutors across a wide range of subjects.
+            </p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="card feature-card p-6 sm:p-8 text-center">
+                <div class="bg-blue-500/20 text-blue-400 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-6 text-3xl">
+                    <span>🎓</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Expert Verified Tutors</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Access a diverse pool of highly qualified and vetted tutors, experts in their respective fields, ready to guide you.
+                </p>
+            </div>
+            <div class="card feature-card p-6 sm:p-8 text-center">
+                <div class="bg-blue-500/20 text-blue-400 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-6 text-3xl">
+                    <span>💡</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Personalized Learning Paths</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Experience lessons tailored to your unique learning style, pace, and academic objectives for maximum impact.
+                </p>
+            </div>
+            <div class="card feature-card p-6 sm:p-8 text-center">
+                <div class="bg-blue-500/20 text-blue-400 rounded-lg w-16 h-16 flex items-center justify-center mx-auto mb-6 text-3xl">
+                    <span>💻</span>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-3">Flexible & Convenient</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Schedule sessions that fit your busy life. Learn anytime, anywhere with our easy-to-use online platform.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 sm:py-24 px-4 bg-gradient-to-b from-[#0B1120] to-slate-900">
+    <div class="container mx-auto grid lg:grid-cols-2 gap-12 xl:gap-20 items-center">
+        <div class="relative aspect-[4/3] sm:aspect-[16/9] lg:aspect-auto lg:h-full rounded-xl overflow-hidden shadow-2xl group">
+            <img src="https://i.pinimg.com/736x/2a/cb/6e/2acb6e54d2096b54ead620c6d8c14989.jpg"
+                 alt="Tutoring session in progress"
+                 class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        </div>
+        <div class="text-center lg:text-left">
+            <p class="text-sm sm:text-base text-blue-400 font-semibold uppercase tracking-wider mb-2">OUR COMMITMENT</p>
+            <h2 class="text-3xl sm:text-4xl font-bold text-white mb-5">More Than Just Tutoring, We Build Futures.</h2>
+            <p class="text-gray-300 text-lg mb-6 leading-relaxed">
+                At TutorConnect, we believe in the power of personalized education. Our mission is to empower students by providing accessible, high-quality tutoring that fosters confidence and drives academic success.
+            </p>
+            <div class="bg-slate-800/50 p-6 rounded-lg border border-slate-700">
+                <h4 class="text-xl font-semibold text-blue-300 mb-2">How TutorConnect Helps You Succeed:</h4>
+                <ul class="list-disc list-inside text-gray-400 space-y-1 text-sm sm:text-base">
+                    <li>Connect with tutors matched to your specific needs.</li>
+                    <li>Track progress and manage sessions easily.</li>
+                    <li>Access resources and support for continuous learning.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 sm:py-24 px-4 text-center bg-slate-900">
+    <div class="container mx-auto">
+        <h2 class="text-3xl sm:text-4xl font-bold text-white mb-6">Ready to Start Your Learning Journey?</h2>
+        <p class="text-gray-300 max-w-xl mx-auto mb-10 text-lg">
+            Join thousands of students and tutors who have found success with TutorConnect.
+        </p>
+        <a href="/register.html" class="btn-primary text-lg px-10 py-3.5">Sign Up Now</a>
+    </div>
+</section>
+
+<footer class="bg-slate-950 text-gray-400 py-10 text-center border-t border-slate-700/50">
+    <div class="container mx-auto">
+        <p>&copy; <span id="currentYear"></span> TutorConnect. All rights reserved.</p>
+        <p class="text-sm mt-1">A Project of First-Year PGN24 Students</p>
+    </div>
+</footer>
+
+<div id="globalErrorDisplay" class="fixed bottom-4 right-4 bg-red-600 text-white p-4 rounded-lg shadow-xl z-[100] text-sm" style="display:none; opacity: 0; transition: opacity 0.5s ease-out;"></div>
+
+<script src="/js/main.js"></script>
+<script src="/js/auth.js"></script> <script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof updateNavOnLoginGlobal === 'function') {
+            console.log("Calling updateNavOnLoginGlobal from index.html (after DOM loaded)");
+            updateNavOnLoginGlobal();
+        } else {
+            console.error("updateNavOnLoginGlobal is not defined. Check if auth.js is loaded correctly and defines this function globally.");
+        }
+    });
+</script>
+</body>
+</html>
