@@ -1,0 +1,5 @@
+user-5087ec1c-1415-4a31-a4fc-212e06186f09,Hiruna,ICTt,Weekdayss,One-on-one,REGULAR
+user-5fb1f55b-5a52-40ec-9f1a-b2d369481649,pasindu,Maths;Organic Chemistry,Tue/Thu 5pm-8pm;Sat All Day,Group sessions,REGULAR
+user-7ad89777-d6dd-4c06-a77f-c969ba85bbbb,kalana,History,weekend,Flexible,REGULAR
+user-1bf8d26c-6303-4c22-b808-9a0a6ee47f16,test4,Science,Tue/Thu 5pm-8pm;Sat All Day,Group sessions,REGULAR
+user-41de79f5-595d-41f0-9d5a-d094cc62a5d1,Nirmal,Physics,Monday 2 PM,Flexible,REGULAR
